@@ -30,7 +30,46 @@ impl<R: BufRead> Scanner<R> {
         }
     }
 }
-
+macro_rules! max {
+    (.. $x:expr) => {{
+        let mut it = $x.iter();
+        it.next().map(|z| it.fold(z, |x, y| max!(x, y)))
+    }};
+    ($x:expr) => ($x);
+    ($x:expr, $($ys:expr),*) => {{
+        let t = max!($($ys),*);
+        if $x > t { $x } else { t }
+    }}
+}
+macro_rules! min {
+    (.. $x:expr) => {{
+        let mut it = $x.iter();
+        it.next().map(|z| it.fold(z, |x, y| min!(x, y)))
+    }};
+    ($x:expr) => ($x);
+    ($x:expr, $($ys:expr),*) => {{
+        let t = min!($($ys),*);
+        if $x < t { $x } else { t }
+    }}
+}
+macro_rules! trace {
+    ($x:expr) => {
+        #[cfg(debug_assertions)]
+        eprintln!(">>> {} = {:?}", stringify!($x), $x)
+    };
+    ($($xs:expr),*) => { trace!(($($xs),*)) }
+}
+macro_rules! put {
+    (.. $x:expr) => {{
+        let mut it = $x.iter();
+        if let Some(x) = it.next() { print!("{}", x); }
+        for x in it { print!(" {}", x); }
+        println!("");
+    }};
+    ($x:expr) => { println!("{}", $x) };
+    ($x:expr, $($xs:expr),*) => { print!("{} ", $x); put!($($xs),*) }
+}
+ 
 fn solve<R: BufRead, W: Write>(scan: &mut Scanner<R>, w: &mut W) {
 }
 
